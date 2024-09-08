@@ -17,8 +17,8 @@
         </div>
 
         <div class="tabs">
-            <button onclick="showTab('agenda-tab')" class="active">Agenda</button>
-            <button onclick="showTab('shopping-list-tab')">Liste de Courses</button>
+            <button onclick="showTab('agenda-tab')" class="tab-button active">Agenda</button>
+            <button onclick="showTab('shopping-list-tab')" class="tab-button">Liste de Courses</button>
         </div>
 
         <div id="agenda-tab" class="tab-content active">
@@ -44,6 +44,9 @@
             <ul id="shopping-list-items"></ul>
         </div>
     </div>
+
+    <!-- Notifications -->
+    <div id="notification-container"></div>
 
     <script src="scripts.js"></script>
 </body>
