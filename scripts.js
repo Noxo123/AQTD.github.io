@@ -1,8 +1,7 @@
 // Variables globales
 let agenda = {};
-let shoppingList = {};
+let shoppingList = [];
 const shareDuration = 60 * 60 * 1000; // 1 heure en millisecondes
-let isReadOnly = false; // Variable pour indiquer si l'agenda est en lecture seule
 
 // Fonction pour générer un ID utilisateur unique
 function generateUserId() {
@@ -28,14 +27,8 @@ function displayUserId() {
 // Fonction pour afficher les onglets
 function showTab(tabId) {
     const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => {
-        tab.style.display = 'none';
-    });
-
-    const activeTab = document.getElementById(tabId);
-    if (activeTab) {
-        activeTab.style.display = 'block';
-    }
+    tabs.forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
 }
 
 // Fonction pour basculer entre le mode sombre et clair
@@ -45,7 +38,7 @@ function toggleDarkMode() {
     icon.textContent = document.body.classList.contains('theme-dark') ? '🌙' : '🌞';
 }
 
-// Fonction pour charger l'agenda de l'utilisateur
+// Fonction pour charger l'agenda
 function loadAgenda() {
     const userId = getUserId();
     const storedAgenda = localStorage.getItem(`agenda-${userId}`);
@@ -55,7 +48,7 @@ function loadAgenda() {
     }
 }
 
-// Fonction pour sauvegarder les rendez-vous de l'utilisateur
+// Fonction pour sauvegarder l'agenda
 function saveAgenda() {
     const userId = getUserId();
     localStorage.setItem(`agenda-${userId}`, JSON.stringify(agenda));
@@ -63,8 +56,6 @@ function saveAgenda() {
 
 // Fonction pour ajouter un rendez-vous
 function addAppointment() {
-    if (isReadOnly) return; // Empêche l'ajout si en lecture seule
-
     const date = document.getElementById('date-input').value;
     const time = document.getElementById('time-input').value;
     const note = document.getElementById('note-input').value;
@@ -78,7 +69,7 @@ function addAppointment() {
     }
 }
 
-// Fonction pour rendre l'agenda
+// Fonction pour afficher l'agenda
 function renderAgenda() {
     const agendaList = document.getElementById('agenda-list');
     agendaList.innerHTML = '';
@@ -87,27 +78,22 @@ function renderAgenda() {
         const li = document.createElement('li');
         li.textContent = `${key} - ${value.note} (${value.priority})`;
 
-        if (!isReadOnly) {
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '❌';
-            deleteBtn.classList.add('delete');
-            deleteBtn.onclick = () => {
-                delete agenda[key];
-                saveAgenda();
-                renderAgenda();
-            };
+        const deleteBtn = document.createElement('span');
+        deleteBtn.textContent = '❌';
+        deleteBtn.classList.add('delete');
+        deleteBtn.onclick = () => {
+            delete agenda[key];
+            saveAgenda();
+            renderAgenda();
+        };
 
-            li.appendChild(deleteBtn);
-        }
-
+        li.appendChild(deleteBtn);
         agendaList.appendChild(li);
     }
 }
 
 // Fonction pour ajouter un article à la liste de courses
 function addShoppingItem() {
-    if (isReadOnly) return; // Empêche l'ajout si en lecture seule
-
     const item = document.getElementById('item-input').value;
     if (item) {
         shoppingList.push(item);
@@ -132,79 +118,44 @@ function loadShoppingList() {
     }
 }
 
-// Fonction pour rendre la liste de courses
+// Fonction pour afficher la liste de courses
 function renderShoppingList() {
-    const shoppingListItems = document.getElementById('shopping-list-items');
-    shoppingListItems.innerHTML = '';
-
+    const list = document.getElementById('shopping-list-items');
+    list.innerHTML = '';
     shoppingList.forEach((item, index) => {
         const li = document.createElement('li');
         li.textContent = item;
 
-        if (!isReadOnly) {
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '❌';
-            deleteBtn.classList.add('delete');
-            deleteBtn.onclick = () => {
-                shoppingList.splice(index, 1);
-                saveShoppingList();
-                renderShoppingList();
-            };
+        const deleteBtn = document.createElement('span');
+        deleteBtn.textContent = '❌';
+        deleteBtn.classList.add('delete');
+        deleteBtn.onclick = () => {
+            shoppingList.splice(index, 1);
+            saveShoppingList();
+            renderShoppingList();
+        };
 
-            li.appendChild(deleteBtn);
-        }
-
-        shoppingListItems.appendChild(li);
+        li.appendChild(deleteBtn);
+        list.appendChild(li);
     });
 }
 
-// Fonction pour partager l'agenda
+// Fonction pour partager l'agenda (lecture seule)
 function shareAgenda() {
-    if (isReadOnly) return; // Empêche le partage si en lecture seule
-
     const userId = getUserId();
-    const agendaShareToken = generateShareToken();
-    const expirationTime = Date.now() + shareDuration;
-    localStorage.setItem(`agenda-share-${userId}`, JSON.stringify({ token: agendaShareToken, expires: expirationTime }));
+    localStorage.setItem(`shared-agenda-${userId}`, JSON.stringify(agenda));
 
-    const shareLink = `${window.location.origin}?share=${agendaShareToken}`;
-    alert(`Votre lien de partage est valable pour 1 heure : ${shareLink}`);
+    setTimeout(() => {
+        localStorage.removeItem(`shared-agenda-${userId}`);
+    }, shareDuration);
+
+    alert('Agenda partagé pour une heure');
 }
 
-// Fonction pour générer un token de partage
-function generateShareToken() {
-    return Math.random().toString(36).substr(2, 10);
-}
-
-// Fonction pour vérifier l'expiration des liens de partage
-function checkShareExpiration() {
-    const userId = getUserId();
-    const shareData = localStorage.getItem(`agenda-share-${userId}`);
-    if (shareData) {
-        const { expires } = JSON.parse(shareData);
-        if (Date.now() > expires) {
-            localStorage.removeItem(`agenda-share-${userId}`);
-        }
-    }
-}
-
-// Fonction pour charger et afficher un agenda partagé
-function loadSharedAgenda() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const shareToken = urlParams.get('share');
-
-    if (shareToken) {
-        const userId = getUserId();
-        const shareData = localStorage.getItem(`agenda-share-${userId}`);
-
-        if (shareData) {
-            const { token, expires } = JSON.parse(shareData);
-
-            if (token === shareToken && Date.now() <= expires) {
-                isReadOnly = true; // Activer le mode lecture seule
-                const sharedAgenda = localStorage.getItem(`agenda-${userId}`);
-                if (sharedAgenda) {
-                    agenda = JSON.parse(sharedAgenda);
-                    renderAgenda();
-                }
-            } e
+// Initialisation
+document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
+window.onload = () => {
+    displayUserId();
+    loadAgenda();
+    loadShoppingList();
+};
