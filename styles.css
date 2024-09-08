@@ -53,7 +53,6 @@ body {
 /* Onglets */
 .tabs {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     margin: 20px 0;
 }
@@ -63,13 +62,23 @@ body {
     border: none;
     padding: 10px 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
     margin: 0 5px;
-    flex: 1 1 auto;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .tabs button:hover {
     background-color: #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.tabs button.active {
+    background-color: #4a90e2;
+    color: white;
+    border-bottom: 2px solid #4a90e2;
 }
 
 /* Contenu des onglets */
@@ -96,14 +105,41 @@ li {
     padding: 10px;
     border-radius: 8px;
     position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Boutons d'action */
+button {
+    background-color: #4a90e2;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #357abd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Bouton de suppression */
 .delete {
     position: absolute;
     right: 10px;
     top: 10px;
     cursor: pointer;
     color: #f00;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.delete:hover {
+    color: #d00;
 }
 
 /* Animation */
@@ -116,43 +152,13 @@ body {
     animation: fadeIn 1s ease-out;
 }
 
-/* Styles Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
     .tabs {
         flex-direction: column;
     }
 
     .tabs button {
-        margin: 5px 0;
-        padding: 10px;
-    }
-
-    .tab-content {
-        margin: 0;
-    }
-
-    .delete {
-        font-size: 18px;
-    }
-}
-
-@media (max-width: 480px) {
-    .theme-toggle {
-        font-size: 20px;
-        top: 10px;
-        right: 10px;
-    }
-
-    .tabs button {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    li {
-        font-size: 14px;
+        margin-bottom: 5px;
     }
 }
