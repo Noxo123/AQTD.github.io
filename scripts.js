@@ -1,6 +1,30 @@
+// scripts.js
+
 // Variables globales
-let agenda = [];
-let shoppingList = [];
+let agenda = {};
+let shoppingList = {};
+const shareDuration = 60 * 60 * 1000; // 1 heure en millisecondes
+
+// Fonction pour générer un ID utilisateur unique
+function generateUserId() {
+    return 'user-' + Math.random().toString(36).substr(2, 9);
+}
+
+// Fonction pour récupérer ou créer un ID utilisateur
+function getUserId() {
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+        userId = generateUserId();
+        localStorage.setItem('userId', userId);
+    }
+    return userId;
+}
+
+// Fonction pour afficher l'ID utilisateur
+function displayUserId() {
+    const userIdDisplay = document.getElementById('user-id-display');
+    userIdDisplay.textContent = `ID Utilisateur: ${getUserId()}`;
+}
 
 // Fonction pour afficher les onglets
 function showTab(tabId) {
@@ -15,6 +39,29 @@ function showTab(tabId) {
     }
 }
 
+// Fonction pour basculer entre le mode sombre et clair
+function toggleDarkMode() {
+    document.body.classList.toggle('theme-dark');
+    const icon = document.getElementById('theme-icon');
+    icon.textContent = document.body.classList.contains('theme-dark') ? '🌙' : '🌞';
+}
+
+// Fonction pour charger l'agenda de l'utilisateur
+function loadAgenda() {
+    const userId = getUserId();
+    const storedAgenda = localStorage.getItem(`agenda-${userId}`);
+    if (storedAgenda) {
+        agenda = JSON.parse(storedAgenda);
+        renderAgenda();
+    }
+}
+
+// Fonction pour sauvegarder les rendez-vous de l'utilisateur
+function saveAgenda() {
+    const userId = getUserId();
+    localStorage.setItem(`agenda-${userId}`, JSON.stringify(agenda));
+}
+
 // Fonction pour ajouter un rendez-vous
 function addAppointment() {
     const date = document.getElementById('date-input').value;
@@ -23,165 +70,145 @@ function addAppointment() {
     const priority = document.getElementById('priority').value;
 
     if (date && time && note) {
-        const appointment = { date, time, note, priority };
-        agenda.push(appointment);
+        const key = `${date} ${time}`;
+        agenda[key] = { note, priority };
         saveAgenda();
         renderAgenda();
-        clearAgendaInputs();
-        sendNotification(date, time, note);
-    } else {
-        alert("Veuillez remplir tous les champs.");
     }
 }
 
-// Fonction pour envoyer une notification
-function sendNotification(date, time, note) {
-    if (Notification.permission === 'granted') {
-        new Notification('Rendez-vous à venir', {
-            body: `Le ${date} à ${time} - ${note}`,
-            icon: 'icon.png' // Remplacez ceci par le chemin de votre icône
-        });
-    } else if (Notification.permission !== 'denied') {
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                sendNotification(date, time, note);
-            }
-        });
+// Fonction pour rendre l'agenda
+function renderAgenda() {
+    const agendaList = document.getElementById('agenda-list');
+    agendaList.innerHTML = '';
+
+    for (const [key, value] of Object.entries(agenda)) {
+        const li = document.createElement('li');
+        li.textContent = `${key} - ${value.note} (${value.priority})`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '❌';
+        deleteBtn.onclick = () => {
+            delete agenda[key];
+            saveAgenda();
+            renderAgenda();
+        };
+
+        li.appendChild(deleteBtn);
+        agendaList.appendChild(li);
     }
 }
 
-// Fonction pour ajouter un article de liste de courses
+// Fonction pour ajouter un article à la liste de courses
 function addShoppingItem() {
     const item = document.getElementById('item-input').value;
-
     if (item) {
         shoppingList.push(item);
         saveShoppingList();
         renderShoppingList();
-        clearShoppingInputs();
-    } else {
-        alert("Veuillez entrer un article.");
     }
 }
 
-// Fonction pour supprimer un rendez-vous de l'agenda
-function deleteAppointment(index) {
-    agenda.splice(index, 1);
-    saveAgenda();
-    renderAgenda();
-}
-
-// Fonction pour supprimer un article de la liste de courses
-function deleteShoppingItem(index) {
-    shoppingList.splice(index, 1);
-    saveShoppingList();
-    renderShoppingList();
-}
-
-// Fonction pour rendre la liste de l'agenda
-function renderAgenda() {
-    const list = document.getElementById('agenda-list');
-    list.innerHTML = '';
-    const searchQuery = document.getElementById('search-input').value.toLowerCase();
-    agenda
-        .filter(item => item.note.toLowerCase().includes(searchQuery))
-        .forEach((item, index) => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                ${item.date} ${item.time} - ${item.note} (Priorité: ${item.priority})
-                <span class="delete" onclick="deleteAppointment(${index})">&times;</span>
-            `;
-            list.appendChild(listItem);
-        });
-}
-
-// Fonction pour rendre la liste de courses
-function renderShoppingList() {
-    const list = document.getElementById('shopping-list-items');
-    list.innerHTML = '';
-    shoppingList.forEach((item, index) => {
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            ${item}
-            <span class="delete" onclick="deleteShoppingItem(${index})">&times;</span>
-        `;
-        list.appendChild(listItem);
-    });
-}
-
-// Fonction pour sauvegarder l'agenda dans localStorage
-function saveAgenda() {
-    localStorage.setItem('agenda', JSON.stringify(agenda));
-}
-
-// Fonction pour sauvegarder la liste de courses dans localStorage
+// Fonction pour sauvegarder la liste de courses
 function saveShoppingList() {
-    localStorage.setItem('shoppingList', JSON.stringify(shoppingList));
+    const userId = getUserId();
+    localStorage.setItem(`shoppingList-${userId}`, JSON.stringify(shoppingList));
 }
 
-// Fonction pour charger l'agenda depuis localStorage
-function loadAgenda() {
-    const storedAgenda = localStorage.getItem('agenda');
-    if (storedAgenda) {
-        agenda = JSON.parse(storedAgenda);
-        renderAgenda();
-    }
-}
-
-// Fonction pour charger la liste de courses depuis localStorage
+// Fonction pour charger la liste de courses
 function loadShoppingList() {
-    const storedShoppingList = localStorage.getItem('shoppingList');
+    const userId = getUserId();
+    const storedShoppingList = localStorage.getItem(`shoppingList-${userId}`);
     if (storedShoppingList) {
         shoppingList = JSON.parse(storedShoppingList);
         renderShoppingList();
     }
 }
 
-// Fonction pour initialiser l'application
-function init() {
-    loadAgenda();
-    loadShoppingList();
-    document.getElementById('search-input').addEventListener('input', renderAgenda);
-}
+// Fonction pour rendre la liste de courses
+function renderShoppingList() {
+    const shoppingListItems = document.getElementById('shopping-list-items');
+    shoppingListItems.innerHTML = '';
 
-// Fonction pour basculer entre le mode sombre et clair
-function toggleDarkMode() {
-    document.body.classList.toggle('theme-dark');
-    const icon = document.getElementById('theme-icon');
-    icon.textContent = document.body.classList.contains('theme-dark') ? '🌙' : '🌞';
+    shoppingList.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.textContent = item;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '❌';
+        deleteBtn.onclick = () => {
+            shoppingList.splice(index, 1);
+            saveShoppingList();
+            renderShoppingList();
+        };
+
+        li.appendChild(deleteBtn);
+        shoppingListItems.appendChild(li);
+    });
 }
 
 // Fonction pour partager l'agenda
 function shareAgenda() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'Mon Agenda',
-            text: 'Voici mon agenda.',
-            url: window.location.href
-        }).catch(console.error);
-    } else {
-        alert('Le partage n\'est pas supporté par ce navigateur.');
+    const userId = getUserId();
+    const agendaShareToken = generateShareToken();
+    const expirationTime = Date.now() + shareDuration;
+    localStorage.setItem(`agenda-share-${userId}`, JSON.stringify({ token: agendaShareToken, expires: expirationTime }));
+
+    const shareLink = `${window.location.origin}?share=${agendaShareToken}`;
+    alert(`Votre lien de partage est valable pour 1 heure : ${shareLink}`);
+}
+
+// Fonction pour générer un token de partage
+function generateShareToken() {
+    return Math.random().toString(36).substr(2, 10);
+}
+
+// Fonction pour vérifier l'expiration des liens de partage
+function checkShareExpiration() {
+    const userId = getUserId();
+    const shareData = localStorage.getItem(`agenda-share-${userId}`);
+    if (shareData) {
+        const { expires } = JSON.parse(shareData);
+        if (Date.now() > expires) {
+            localStorage.removeItem(`agenda-share-${userId}`);
+        }
     }
 }
 
-// Fonction pour ajouter un bouton de widget à l'écran d'accueil
-function addWidget() {
-    if ('AddToHomeScreen' in window) {
-        window.AddToHomeScreen();
-    } else {
-        alert('Le widget n\'est pas supporté par ce navigateur.');
+// Fonction pour charger et afficher un agenda partagé
+function loadSharedAgenda() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const shareToken = urlParams.get('share');
+
+    if (shareToken) {
+        const userId = getUserId();
+        const shareData = localStorage.getItem(`agenda-share-${userId}`);
+
+        if (shareData) {
+            const { token, expires } = JSON.parse(shareData);
+
+            if (token === shareToken && Date.now() <= expires) {
+                const sharedAgenda = localStorage.getItem(`agenda-${userId}`);
+                if (sharedAgenda) {
+                    agenda = JSON.parse(sharedAgenda);
+                    renderAgenda();
+                }
+            } else {
+                alert('Le lien de partage a expiré ou est invalide.');
+            }
+        }
     }
 }
 
 // Initialiser l'application
-function init() {
+document.addEventListener('DOMContentLoaded', () => {
+    displayUserId();
     loadAgenda();
     loadShoppingList();
+    loadSharedAgenda();
     document.getElementById('search-input').addEventListener('input', renderAgenda);
     showTab('agenda-tab'); // Affiche l'onglet Agenda par défaut
-}
-// Initialiser l'application
-document.addEventListener('DOMContentLoaded', init);
+});
 
 // Gestion du bouton de changement de thème
 document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
