@@ -1,9 +1,8 @@
-// scripts.js
-
 // Variables globales
 let agenda = {};
-let shoppingList = {};
+let shoppingList = [];
 const shareDuration = 60 * 60 * 1000; // 1 heure en millisecondes
+const notificationInterval = 60 * 1000; // Vérification toutes les minutes
 
 // Fonction pour générer un ID utilisateur unique
 function generateUserId() {
@@ -36,6 +35,16 @@ function showTab(tabId) {
     const activeTab = document.getElementById(tabId);
     if (activeTab) {
         activeTab.style.display = 'block';
+    }
+
+    // Gérer les boutons d'onglets actifs
+    const tabButtons = document.querySelectorAll('.tabs button');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    const activeButton = document.querySelector(`.tabs button[onclick="showTab('${tabId}')"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
     }
 }
 
@@ -77,74 +86,67 @@ function addAppointment() {
     }
 }
 
-// Fonction pour rendre l'agenda
+// Fonction pour rendre l'agenda avec les priorités en couleur
 function renderAgenda() {
     const agendaList = document.getElementById('agenda-list');
     agendaList.innerHTML = '';
 
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
+
     for (const [key, value] of Object.entries(agenda)) {
-        const li = document.createElement('li');
-        li.textContent = `${key} - ${value.note} (${value.priority})`;
+        if (key.toLowerCase().includes(searchInput) || value.note.toLowerCase().includes(searchInput)) {
+            const li = document.createElement('li');
+            li.textContent = `${key} - ${value.note} (${value.priority})`;
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '❌';
-        deleteBtn.onclick = () => {
-            delete agenda[key];
-            saveAgenda();
-            renderAgenda();
-        };
+            // Ajoutez une couleur en fonction de la priorité
+            if (value.priority === 'Faible') {
+                li.style.backgroundColor = '#b3e5fc'; // Bleu clair
+            } else if (value.priority === 'Moyenne') {
+                li.style.backgroundColor = '#fff59d'; // Jaune clair
+            } else if (value.priority === 'Élevée') {
+                li.style.backgroundColor = '#ffccbc'; // Orange clair
+            }
 
-        li.appendChild(deleteBtn);
-        agendaList.appendChild(li);
+            const deleteBtn = document.createElement('span');
+            deleteBtn.textContent = '❌';
+            deleteBtn.className = 'delete';
+            deleteBtn.onclick = () => {
+                delete agenda[key];
+                saveAgenda();
+                renderAgenda();
+            };
+
+            li.appendChild(deleteBtn);
+            agendaList.appendChild(li);
+        }
     }
 }
 
-// Fonction pour ajouter un article à la liste de courses
-function addShoppingItem() {
-    const item = document.getElementById('item-input').value;
-    if (item) {
-        shoppingList.push(item);
-        saveShoppingList();
-        renderShoppingList();
+// Fonction pour envoyer des notifications de rappel
+function sendNotification(message) {
+    const notificationContainer = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+
+    notificationContainer.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// Fonction pour vérifier les rendez-vous à venir
+function checkUpcomingAppointments() {
+    const now = new Date();
+    const next24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    for (const key of Object.keys(agenda)) {
+        const appointmentDate = new Date(key);
+        if (appointmentDate > now && appointmentDate <= next24Hours) {
+            sendNotification(`Rappel: Vous avez un rendez-vous à venir le ${key}.`);
+        }
     }
-}
-
-// Fonction pour sauvegarder la liste de courses
-function saveShoppingList() {
-    const userId = getUserId();
-    localStorage.setItem(`shoppingList-${userId}`, JSON.stringify(shoppingList));
-}
-
-// Fonction pour charger la liste de courses
-function loadShoppingList() {
-    const userId = getUserId();
-    const storedShoppingList = localStorage.getItem(`shoppingList-${userId}`);
-    if (storedShoppingList) {
-        shoppingList = JSON.parse(storedShoppingList);
-        renderShoppingList();
-    }
-}
-
-// Fonction pour rendre la liste de courses
-function renderShoppingList() {
-    const shoppingListItems = document.getElementById('shopping-list-items');
-    shoppingListItems.innerHTML = '';
-
-    shoppingList.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.textContent = item;
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '❌';
-        deleteBtn.onclick = () => {
-            shoppingList.splice(index, 1);
-            saveShoppingList();
-            renderShoppingList();
-        };
-
-        li.appendChild(deleteBtn);
-        shoppingListItems.appendChild(li);
-    });
 }
 
 // Fonction pour partager l'agenda
@@ -161,18 +163,6 @@ function shareAgenda() {
 // Fonction pour générer un token de partage
 function generateShareToken() {
     return Math.random().toString(36).substr(2, 10);
-}
-
-// Fonction pour vérifier l'expiration des liens de partage
-function checkShareExpiration() {
-    const userId = getUserId();
-    const shareData = localStorage.getItem(`agenda-share-${userId}`);
-    if (shareData) {
-        const { expires } = JSON.parse(shareData);
-        if (Date.now() > expires) {
-            localStorage.removeItem(`agenda-share-${userId}`);
-        }
-    }
 }
 
 // Fonction pour charger et afficher un agenda partagé
@@ -200,14 +190,15 @@ function loadSharedAgenda() {
     }
 }
 
-// Initialiser l'application
+// Fonction initiale
 document.addEventListener('DOMContentLoaded', () => {
     displayUserId();
     loadAgenda();
-    loadShoppingList();
     loadSharedAgenda();
     document.getElementById('search-input').addEventListener('input', renderAgenda);
     showTab('agenda-tab'); // Affiche l'onglet Agenda par défaut
+
+    setInterval(checkUpcomingAppointments, notificationInterval); // Vérification des rendez-vous toutes les minutes
 });
 
 // Gestion du bouton de changement de thème
