@@ -1,220 +1,164 @@
-/* Global Styles */
+/* Styles généraux */
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
     transition: background-color 0.3s, color 0.3s;
-    background-color: #f0f4f8;
+}
+
+/* Thème clair */
+body {
+    background-color: #f0f0f0;
     color: #333;
 }
 
-.container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
+.theme-dark {
+    background-color: #333;
+    color: #f0f0f0;
 }
 
-/* Header */
-header {
+.theme-dark .tab-content {
+    background-color: #444;
+    color: #f0f0f0;
+}
+
+.theme-dark .tabs button {
+    background-color: #555;
+    color: #f0f0f0;
+}
+
+.theme-dark .tabs button:hover {
+    background-color: #666;
+}
+
+.theme-dark .delete {
+    color: #f00;
+}
+
+/* Bouton de changement de thème */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: transform 0.3s;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.2);
+}
+
+/* Onglets */
+.tabs {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.tabs button {
+    background-color: #ddd;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    margin: 0 5px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.tabs button:hover {
+    background-color: #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.tabs button.active {
     background-color: #4a90e2;
     color: white;
+    border-bottom: 2px solid #4a90e2;
 }
 
-header h1 {
-    margin: 0;
+/* Contenu des onglets */
+.tab-content {
+    display: none;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 0 10px;
 }
 
-/* Buttons */
+.tab-content h2 {
+    margin-top: 0;
+}
+
+/* Liste */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #fff;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Boutons d'action */
 button {
-    background-color: #f76c6c;
+    background-color: #4a90e2;
     border: none;
     color: white;
     padding: 10px 20px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    margin: 5px;
 }
 
 button:hover {
-    background-color: #ff5e5e;
-    transform: scale(1.05);
+    background-color: #357abd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
-/* Theme Toggle */
-#theme-toggle {
-    background-color: transparent;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-/* Tabs */
-.tabs {
-    display: flex;
-    border-bottom: 2px solid #4a90e2;
-    margin-bottom: 20px;
-}
-
-.tab-button {
-    background-color: #f0f4f8;
-    border: 1px solid #ddd;
-    border-radius: 5px 5px 0 0;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    margin-right: 10px;
-}
-
-.tab-button.active {
-    background-color: #4a90e2;
-    color: white;
-    border-bottom: 2px solid #4a90e2;
-}
-
-/* Tab Content */
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Agenda */
-#agenda-list {
-    list-style: none;
-    padding: 0;
-}
-
-#agenda-list li {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px;
-    position: relative;
-}
-
-#agenda-list button {
+/* Bouton de suppression */
+.delete {
     position: absolute;
     right: 10px;
     top: 10px;
-    background: none;
-    border: none;
-    color: #ff5e5e;
-    font-size: 16px;
     cursor: pointer;
-}
-
-#agenda-list button:hover {
-    color: #e74c3c;
-}
-
-/* Shopping List */
-#shopping-list-items {
-    list-style: none;
-    padding: 0;
-}
-
-#shopping-list-items li {
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px;
-    position: relative;
-}
-
-#shopping-list-items button {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background: none;
-    border: none;
-    color: #ff5e5e;
+    color: #f00;
     font-size: 16px;
-    cursor: pointer;
+    transition: color 0.3s;
 }
 
-#shopping-list-items button:hover {
-    color: #e74c3c;
+.delete:hover {
+    color: #d00;
 }
 
-/* Dark Mode */
-.theme-dark {
-    background-color: #121212;
-    color: #e0e0e0;
-}
-
-.theme-dark header {
-    background-color: #1f1f1f;
-}
-
-.theme-dark .tabs {
-    border-bottom: 2px solid #1f1f1f;
-}
-
-.theme-dark .tab-button {
-    background-color: #1f1f1f;
-    color: #e0e0e0;
-    border: 1px solid #333;
-}
-
-.theme-dark .tab-button.active {
-    background-color: #4a90e2;
-    color: white;
-    border-bottom: 2px solid #4a90e2;
-}
-
-.theme-dark #agenda-list li {
-    background-color: #1e1e1e;
-    border: 1px solid #333;
-}
-
-.theme-dark #shopping-list-items li {
-    background-color: #1e1e1e;
-    border: 1px solid #333;
-}
-
-/* Animations */
+/* Animation */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes scaleUp {
-    from { transform: scale(0.9); }
-    to { transform: scale(1); }
-}
-
-.fade-in {
+body {
     animation: fadeIn 1s ease-out;
-}
-
-.scale-up {
-    animation: scaleUp 0.3s ease-out;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     .tabs {
         flex-direction: column;
     }
 
-    .tab-button {
+    .tabs button {
         margin-bottom: 5px;
     }
 }
