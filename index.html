@@ -1,51 +1,42 @@
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Outils Pratiques</title>
+    <title>Agenda et Liste de Courses</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker enregistré avec succès:', registration);
-                    })
-                    .catch(error => {
-                        console.log('Enregistrement du Service Worker échoué:', error);
-                    });
-            });
-        }
-    </script>
 </head>
 <body>
-    <h1>Outils Pratiques</h1>
+    <div id="theme-toggle" class="theme-toggle">
+        <span id="theme-icon">🌞</span>
+    </div>
     
     <div class="tabs">
-        <button onclick="showTab('agenda')">Agenda</button>
-        <button onclick="showTab('shopping')">Liste de Courses</button>
+        <button onclick="showTab('agenda-tab')">Agenda</button>
+        <button onclick="showTab('shopping-list-tab')">Liste de Courses</button>
     </div>
     
-    <div id="agenda" class="tab-content active">
+    <div id="agenda-tab" class="tab-content">
         <h2>Agenda</h2>
-        <input type="date" id="agenda-date">
-        <textarea id="agenda-note" placeholder="Écrivez votre rendez-vous ici..."></textarea>
-        <button onclick="saveAgenda()">Ajouter un rendez-vous</button>
-
-        <h3>Liste des rendez-vous</h3>
-        <input type="text" id="agenda-filter" placeholder="Filtrer les rendez-vous..." oninput="filterAgenda()">
-
-        <!-- Liste des rendez-vous -->
-        <div id="agenda-container"></div>
+        <input type="text" id="search-input" placeholder="Rechercher un rendez-vous">
+        <input type="date" id="date-input">
+        <input type="time" id="time-input">
+        <input type="text" id="note-input" placeholder="Note">
+        <select id="priority">
+            <option value="Faible">Faible</option>
+            <option value="Moyenne">Moyenne</option>
+            <option value="Élevée">Élevée</option>
+        </select>
+        <button onclick="addAppointment()">Ajouter Rendez-vous</button>
+        <button onclick="shareAgenda()">Partager l'Agenda</button>
+        <ul id="agenda-list"></ul>
     </div>
     
-    <div id="shopping" class="tab-content">
+    <div id="shopping-list-tab" class="tab-content">
         <h2>Liste de Courses</h2>
-        <input type="text" id="shopping-item" placeholder="Ajouter un article...">
-        <button onclick="addShoppingItem()">Ajouter</button>
-
-        <ul id="shopping-list"></ul>
+        <input type="text" id="item-input" placeholder="Article">
+        <button onclick="addShoppingItem()">Ajouter Article</button>
+        <ul id="shopping-list-items"></ul>
     </div>
 
     <script src="scripts.js"></script>
