@@ -1,94 +1,127 @@
+/* styles.css */
+
+/* Global Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #eaf0f8; /* Bleu clair pastel */
-    color: #333;
     margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
 }
 
-h1 {
-    color: #ff7f50; /* Orange clair */
-    text-align: center;
+button {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* Tabs */
 .tabs {
-    text-align: center;
+    display: flex;
+    justify-content: space-around;
     margin-bottom: 20px;
 }
 
 .tabs button {
-    background-color: #ffcc99; /* Orange clair */
-    border: none;
-    padding: 10px 20px;
-    margin-right: 10px;
-    cursor: pointer;
-    color: white;
-    font-size: 16px;
-    border-radius: 5px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
 }
 
-.tabs button:hover {
-    background-color: #ffb347; /* Orange plus foncé */
+.tabs button.active {
+    background-color: #007bff;
+    color: #fff;
 }
 
+/* Tab Content */
 .tab-content {
     display: none;
-    margin-top: 20px;
 }
 
 .tab-content.active {
     display: block;
 }
 
-input[type="date"], textarea, input[type="text"] {
-    width: 100%;
+/* Dark Mode */
+body.theme-dark {
+    background-color: #1e1e1e;
+    color: #e1e1e1;
+}
+
+body.theme-dark .tabs button {
+    background-color: #2c2c2c;
+    border-color: #444;
+}
+
+body.theme-dark .tabs button.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+body.theme-dark button {
+    background-color: #333;
+    color: #fff;
+}
+
+/* Forms and Inputs */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+select {
+    width: calc(100% - 20px);
     padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button {
-    background-color: #42a5f5; /* Bleu clair */
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #1e88e5; /* Bleu plus foncé */
-}
-
-.agenda-date, ul {
-    margin-bottom: 15px;
-}
-
-.agenda-item, li {
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    margin: 5px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin: 10px 0;
     border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-.agenda-item button, li button {
-    background-color: #ff5252; /* Rouge clair */
-    color: white;
-    border: none;
-    padding: 5px;
-    border-radius: 50%;
-    cursor: pointer;
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+select:focus {
+    border-color: #007bff;
+    outline: none;
 }
 
-.agenda-item button:hover, li button:hover {
-    background-color: #e53935; /* Rouge plus foncé */
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-#agenda-filter {
-    margin-bottom: 20px;
+body {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tabs button {
+        margin-bottom: 10px;
+    }
 }
