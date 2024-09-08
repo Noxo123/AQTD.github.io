@@ -1,0 +1,94 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #eaf0f8; /* Bleu clair pastel */
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #ff7f50; /* Orange clair */
+    text-align: center;
+}
+
+.tabs {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    background-color: #ffcc99; /* Orange clair */
+    border: none;
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.tabs button:hover {
+    background-color: #ffb347; /* Orange plus foncé */
+}
+
+.tab-content {
+    display: none;
+    margin-top: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+input[type="date"], textarea, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #42a5f5; /* Bleu clair */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1e88e5; /* Bleu plus foncé */
+}
+
+.agenda-date, ul {
+    margin-bottom: 15px;
+}
+
+.agenda-item, li {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ddd;
+}
+
+.agenda-item button, li button {
+    background-color: #ff5252; /* Rouge clair */
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.agenda-item button:hover, li button:hover {
+    background-color: #e53935; /* Rouge plus foncé */
+}
+
+#agenda-filter {
+    margin-bottom: 20px;
+}

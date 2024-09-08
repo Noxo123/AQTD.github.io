@@ -1,0 +1,53 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outils Pratiques</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker enregistré avec succès:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Enregistrement du Service Worker échoué:', error);
+                    });
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Outils Pratiques</h1>
+    
+    <div class="tabs">
+        <button onclick="showTab('agenda')">Agenda</button>
+        <button onclick="showTab('shopping')">Liste de Courses</button>
+    </div>
+    
+    <div id="agenda" class="tab-content active">
+        <h2>Agenda</h2>
+        <input type="date" id="agenda-date">
+        <textarea id="agenda-note" placeholder="Écrivez votre rendez-vous ici..."></textarea>
+        <button onclick="saveAgenda()">Ajouter un rendez-vous</button>
+
+        <h3>Liste des rendez-vous</h3>
+        <input type="text" id="agenda-filter" placeholder="Filtrer les rendez-vous..." oninput="filterAgenda()">
+
+        <!-- Liste des rendez-vous -->
+        <div id="agenda-container"></div>
+    </div>
+    
+    <div id="shopping" class="tab-content">
+        <h2>Liste de Courses</h2>
+        <input type="text" id="shopping-item" placeholder="Ajouter un article...">
+        <button onclick="addShoppingItem()">Ajouter</button>
+
+        <ul id="shopping-list"></ul>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
