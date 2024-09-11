@@ -1,229 +1,44 @@
-/* Styles généraux */
+/* styles/main.css */
+
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f0f4f8;
-    color: #333;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
-    transition: background-color 0.3s, color 0.3s;
 }
 
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Thème clair et sombre */
-body {
-    background-color: #f0f4f8;
-    color: #333;
-}
-
-.theme-dark {
-    background-color: #1e1e2f;
-    color: #f0f4f8;
-}
-
-.theme-dark .tab-content {
-    background-color: #292b3a;
-}
-
-.theme-dark .tabs button {
-    background-color: #44475a;
-    color: #f0f4f8;
-}
-
-.theme-dark .tabs button:hover {
-    background-color: #6272a4;
-}
-
-.theme-dark .delete {
-    color: #ff5555;
-}
-
-/* Bouton de changement de thème */
-.theme-toggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    font-size: 24px;
-    cursor: pointer;
-    z-index: 1000;
-    background-color: #4a90e2;
-    padding: 10px;
-    border-radius: 50%;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.1);
-    background-color: #357abd;
-}
-
-.theme-toggle span {
+header {
+    background: #333;
     color: #fff;
+    padding: 10px 0;
 }
 
-/* Section utilisateur */
-.user-section {
+header h1 {
+    margin: 0;
     text-align: center;
-    font-size: 18px;
-    margin-bottom: 20px;
 }
 
-/* Onglets */
-.tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.tabs button {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px 24px;
-    margin: 0 10px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background-color 0.3s, color 0.3s;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.tabs button:hover {
-    background-color: #4a90e2;
-    color: #fff;
-}
-
-.tabs button.active {
-    background-color: #4a90e2;
-    color: #fff;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Contenu des onglets */
-.tab-content {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Inputs et boutons */
-input[type="text"], input[type="date"], input[type="time"], select {
-    width: calc(100% - 20px);
-    padding: 12px;
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-button {
-    display: inline-block;
-    background-color: #4a90e2;
-    color: #fff;
-    padding: 12px 24px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    margin-top: 10px;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #357abd;
-    transform: translateY(-2px);
-}
-
-button:active {
-    transform: translateY(0);
-}
-
-/* Liste des rendez-vous et articles */
-ul {
-    list-style-type: none;
+nav ul {
+    list-style: none;
     padding: 0;
-    margin-top: 20px;
 }
 
-li {
-    background-color: #fff;
-    margin: 10px 0;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s;
+nav ul li {
+    display: inline;
+    margin-right: 10px;
 }
 
-li:hover {
-    background-color: #f5f5f5;
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
 }
 
-.delete {
-    font-size: 20px;
-    color: #ff5555;
-    cursor: pointer;
-    margin-left: 20px;
-    transition: color 0.3s;
-}
-
-.delete:hover {
-    color: #d32f2f;
-}
-
-/* Responsiveness */
-@media (max-width: 768px) {
-    .tabs {
-        flex-direction: column;
-    }
-
-    .tabs button {
-        width: 90%;
-        margin: 5px 0;
-    }
-
-    input[type="text"], input[type="date"], input[type="time"], select {
-        width: 100%;
-    }
-
-    button {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .theme-toggle {
-        font-size: 20px;
-        top: 10px;
-        right: 10px;
-        padding: 8px;
-    }
-
-    .tabs button {
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    li {
-        padding: 12px;
-    }
-
-    .delete {
-        font-size: 18px;
-    }
+footer {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }
