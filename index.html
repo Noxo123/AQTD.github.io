@@ -1,55 +1,30 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda et Liste de Courses</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Mon Site</title>
+    <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Bouton de changement de thème -->
-        <div id="theme-toggle" class="theme-toggle">
-            <span id="theme-icon">🌞</span>
-        </div>
-
-        <!-- Section utilisateur -->
-        <div class="user-section">
-            <span id="user-id-display"></span>
-        </div>
-
-        <!-- Onglets -->
-        <div class="tabs">
-            <button onclick="showTab('agenda-tab')" class="active">Agenda</button>
-            <button onclick="showTab('shopping-list-tab')">Liste de Courses</button>
-        </div>
-
-        <!-- Contenu Agenda -->
-        <div id="agenda-tab" class="tab-content active">
-            <h2>Agenda</h2>
-            <input type="text" id="search-input" placeholder="Rechercher un rendez-vous">
-            <input type="date" id="date-input">
-            <input type="time" id="time-input">
-            <input type="text" id="note-input" placeholder="Note">
-            <select id="priority">
-                <option value="Faible">Faible</option>
-                <option value="Moyenne">Moyenne</option>
-                <option value="Élevée">Élevée</option>
-            </select>
-            <button id="add-appointment-btn" onclick="addAppointment()">Ajouter Rendez-vous</button>
-            <button id="share-agenda-btn" onclick="shareAgenda()">Partager l'Agenda</button>
-            <ul id="agenda-list"></ul>
-        </div>
-
-        <!-- Contenu Liste de Courses -->
-        <div id="shopping-list-tab" class="tab-content">
-            <h2>Liste de Courses</h2>
-            <input type="text" id="item-input" placeholder="Article">
-            <button onclick="addShoppingItem()">Ajouter Article</button>
-            <ul id="shopping-list-items"></ul>
-        </div>
-    </div>
-
-    <script src="scripts.js"></script>
+    <header>
+        <h1>Bienvenue sur Mon Site</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="profile.html">Profil</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <!-- Contenu principal ici -->
+    </main>
+    
+    <footer>
+        <p>&copy; 2024 Mon Site</p>
+    </footer>
+    
+    <script src="scripts/main.js"></script>
 </body>
 </html>
