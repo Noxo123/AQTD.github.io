@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="dashboard-section">
+    <div id="dashboard-section" style="display: none;">
         <h2>Tableau de bord</h2>
         <button id="logout-button">Se déconnecter</button>
         <button id="theme-toggle">🌞 Mode Sombre</button>
@@ -24,6 +24,22 @@
                 <ul id="shopping-list"></ul>
             </div>
         </div>
+    </div>
+
+    <div id="auth-section">
+        <h2>Connexion / Inscription</h2>
+        <!-- Login Form -->
+        <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required>
+            <input type="password" id="login-password" placeholder="Mot de passe" required>
+            <button type="submit">Se connecter</button>
+        </form>
+        <!-- Signup Form -->
+        <form id="signup-form">
+            <input type="email" id="signup-email" placeholder="Email" required>
+            <input type="password" id="signup-password" placeholder="Mot de passe" required>
+            <button type="submit">S'inscrire</button>
+        </form>
     </div>
 
     <script src="scripts.js"></script>
