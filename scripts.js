@@ -55,3 +55,55 @@ document.getElementById('logout-btn').addEventListener('click', () => {
         console.error('Erreur lors de la déconnexion', error);
     });
 });
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Vérification et ajout de l'écouteur sur le formulaire de connexion
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    console.error('Erreur de connexion', error);
+                });
+        });
+    } else {
+        console.error('Formulaire de connexion non trouvé');
+    }
+
+    // Vérification et ajout de l'écouteur sur le formulaire d'inscription
+    if (signupForm) {
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    window.location.href = "dashboard.html";
+                })
+                .catch((error) => {
+                    console.error('Erreur lors de l\'inscription', error);
+                });
+        });
+    }
+
+    // Vérification et ajout de l'écouteur sur le bouton de déconnexion
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                console.error('Erreur lors de la déconnexion', error);
+            });
+        });
+    }
+});
