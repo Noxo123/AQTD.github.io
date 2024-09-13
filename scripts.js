@@ -28,24 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authSection = document.getElementById('auth-section');
     const dashboardSection = document.getElementById('dashboard-section');
 
-    // User sign up
-    if (signupForm) {
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    console.log('Utilisateur créé:', userCredential.user);
-                })
-                .catch((error) => {
-                    console.error('Erreur lors de l\'inscription:', error);
-                });
-        });
-    }
-
-    // User login
+    // Ensure elements exist before adding event listeners
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -63,7 +46,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // User logout
+    if (signupForm) {
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    console.log('Utilisateur créé:', userCredential.user);
+                })
+                .catch((error) => {
+                    console.error('Erreur lors de l\'inscription:', error);
+                });
+        });
+    }
+
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
             signOut(auth).then(() => {
@@ -75,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Switch theme
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleDarkMode);
     }
@@ -98,14 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show dashboard
     function showDashboard() {
-        authSection.style.display = 'none';
-        dashboardSection.style.display = 'block';
+        if (authSection) authSection.style.display = 'none';
+        if (dashboardSection) dashboardSection.style.display = 'block';
     }
 
     // Show authentication section
     function showAuthSection() {
-        authSection.style.display = 'block';
-        dashboardSection.style.display = 'none';
+        if (authSection) authSection.style.display = 'block';
+        if (dashboardSection) dashboardSection.style.display = 'none';
     }
 
     // Load user data (agenda and shopping list)
@@ -141,22 +138,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render agenda
     function renderAgenda(agenda) {
         const agendaList = document.getElementById('agenda-list');
-        agendaList.innerHTML = '';
-        Object.entries(agenda).forEach(([date, entry]) => {
-            const li = document.createElement('li');
-            li.textContent = `${date}: ${entry.note} (Priorité: ${entry.priority})`;
-            agendaList.appendChild(li);
-        });
+        if (agendaList) {
+            agendaList.innerHTML = '';
+            Object.entries(agenda).forEach(([date, entry]) => {
+                const li = document.createElement('li');
+                li.textContent = `${date}: ${entry.note} (Priorité: ${entry.priority})`;
+                agendaList.appendChild(li);
+            });
+        }
     }
 
     // Render shopping list
     function renderShoppingList(shoppingList) {
         const shoppingListElement = document.getElementById('shopping-list');
-        shoppingListElement.innerHTML = '';
-        shoppingList.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            shoppingListElement.appendChild(li);
-        });
+        if (shoppingListElement) {
+            shoppingListElement.innerHTML = '';
+            shoppingList.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                shoppingListElement.appendChild(li);
+            });
+        }
     }
 });
