@@ -3,28 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Site</title>
+    <title>Login - Application</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Bienvenue sur Mon Site</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="profile.html">Profil</a></li>
-            </ul>
-        </nav>
-    </header>
-    
-    <main>
-        <!-- Contenu principal ici -->
-    </main>
-    
-    <footer>
-        <p>&copy; 2024 Mon Site</p>
-    </footer>
-    
-    <script src="scripts/main.js"></script>
+    <div class="auth-frame" id="auth-frame">
+        <div class="auth-content">
+            <button id="close-auth-frame" class="close-btn">×</button>
+            <h2 id="auth-title">Login</h2>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button id="auth-btn">Sign In</button>
+            <p id="switch-auth">Don't have an account? <span id="toggle-auth">Sign Up</span></p>
+        </div>
+    </div>
+
+    <script type="module" src="scripts.js"></script>
 </body>
 </html>
