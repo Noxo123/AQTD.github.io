@@ -21,6 +21,7 @@ const db = getDatabase(app);
 
 // Load when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if elements exist before adding event listeners
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
     const logoutButton = document.getElementById('logout-button');
@@ -28,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const authSection = document.getElementById('auth-section');
     const dashboardSection = document.getElementById('dashboard-section');
 
-    // Ensure elements exist before adding event listeners
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
