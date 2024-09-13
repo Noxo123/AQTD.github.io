@@ -1,57 +1,51 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
-
-const firebaseConfig = {
-    apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
-    authDomain: "aqtd-5f6ed.firebaseapp.com",
-    projectId: "aqtd-5f6ed",
-    storageBucket: "aqtd-5f6ed.appspot.com",
-    messagingSenderId: "755816540323",
-    appId: "1:755816540323:web:e85774039b471fee7cf716",
-    measurementId: "G-C59QS88D6Y"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-document.addEventListener('DOMContentLoaded', () => {
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is signed in, redirect to dashboard
-            window.location.href = 'dashboard.html';
-        }
+document.addEventListener("DOMContentLoaded", () => {
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const showSignupBtn = document.getElementById('show-signup-btn');
+    const toggleThemeBtn = document.getElementById('toggle-theme-btn');
+    
+    // Basculer entre les formulaires connexion et inscription
+    showSignupBtn.addEventListener('click', () => {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
     });
-});
 
-document.getElementById('auth-btn').addEventListener('click', () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const authTitle = document.getElementById('auth-title').textContent;
+    // Bascule du thème sombre
+    toggleThemeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+    });
 
-    if (authTitle === 'Login') {
-        signInWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                window.location.href = 'dashboard.html'; // Redirect to dashboard
+    // Gestion du login
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // Votre code Firebase pour la connexion
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Redirection vers dashboard.html après connexion
+                window.location.href = "dashboard.html";
             })
-            .catch(error => alert('Error: ' + error.message));
-    } else {
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                window.location.href = 'dashboard.html'; // Redirect to dashboard
-            })
-            .catch(error => alert('Error: ' + error.message));
-    }
-});
+            .catch((error) => {
+                console.error('Erreur lors de la connexion', error);
+            });
+    });
 
-document.getElementById('toggle-auth').addEventListener('click', () => {
-    const authTitle = document.getElementById('auth-title');
-    if (authTitle.textContent === 'Login') {
-        authTitle.textContent = 'Sign Up';
-        document.getElementById('auth-btn').textContent = 'Sign Up';
-        document.getElementById('switch-auth').textContent = 'Already have an account?';
-    } else {
-        authTitle.textContent = 'Login';
-        document.getElementById('auth-btn').textContent = 'Sign In';
-        document.getElementById('switch-auth').textContent = 'Don\'t have an account?';
-    }
+    // Gestion de l'inscription
+    signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        
+        // Votre code Firebase pour l'inscription
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Redirection vers dashboard.html après inscription
+                window.location.href = "dashboard.html";
+            })
+            .catch((error) => {
+                console.error('Erreur lors de l\'inscription', error);
+            });
+    });
 });
