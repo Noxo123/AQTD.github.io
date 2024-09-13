@@ -1,5 +1,4 @@
-// Assurez-vous de ne pas importer Firebase plusieurs fois
-// Initialisez Firebase uniquement une fois
+// Import unique de Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
 
@@ -18,8 +17,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Gestion de l'authentification
-
 // Connexion utilisateur
 document.getElementById('login-form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -28,7 +25,6 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            // Redirection après connexion réussie
             window.location.href = "dashboard.html";
         })
         .catch((error) => {
@@ -44,7 +40,6 @@ document.getElementById('signup-form').addEventListener('submit', (e) => {
 
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-            // Redirection après inscription réussie
             window.location.href = "dashboard.html";
         })
         .catch((error) => {
@@ -55,7 +50,6 @@ document.getElementById('signup-form').addEventListener('submit', (e) => {
 // Déconnexion utilisateur
 document.getElementById('logout-btn').addEventListener('click', () => {
     signOut(auth).then(() => {
-        // Redirection après déconnexion
         window.location.href = "index.html";
     }).catch((error) => {
         console.error('Erreur lors de la déconnexion', error);
