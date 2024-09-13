@@ -1,192 +1,115 @@
-import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
-import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js';
+// dashboard.js
 
+// Import Firebase modules
+import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
+import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js';
+
+// Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
-    authDomain: "aqtd-5f6ed.firebaseapp.com",
-    projectId: "aqtd-5f6ed",
-    storageBucket: "aqtd-5f6ed.appspot.com",
-    messagingSenderId: "755816540323",
-    appId: "1:755816540323:web:e85774039b471fee7cf716",
-    measurementId: "G-C59QS88D6Y"
+  apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
+  authDomain: "aqtd-5f6ed.firebaseapp.com",
+  projectId: "aqtd-5f6ed",
+  storageBucket: "aqtd-5f6ed.appspot.com",
+  messagingSenderId: "755816540323",
+  appId: "1:755816540323:web:e85774039b471fee7cf716",
+  measurementId: "G-C59QS88D6Y"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-let agenda = {};
-let shoppingList = [];
-let isReadOnly = false;
-
-function showTab(tabId) {
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => {
-        tab.style.display = 'none';
-    });
-
-    const activeTab = document.getElementById(tabId);
-    if (activeTab) {
-        activeTab.style.display = 'block';
-    }
-}
-
-function toggleDarkMode() {
-    document.body.classList.toggle('theme-dark');
-    const icon = document.getElementById('theme-icon');
-    if (icon) {
-        icon.textContent = document.body.classList.contains('theme-dark') ? '🌙' : '🌞';
-    }
-}
-
-function loadAgenda() {
-    const user = auth.currentUser;
-    if (user) {
-        const userId = user.uid;
-        const agendaRef = ref(db, 'agenda/' + userId);
-        onValue(agendaRef, (snapshot) => {
-            agenda = snapshot.val() || {};
-            renderAgenda();
-        });
-    }
-}
-
-function saveAgenda() {
-    const user = auth.currentUser;
-    if (user) {
-        const userId = user.uid;
-        const agendaRef = ref(db, 'agenda/' + userId);
-        set(agendaRef, agenda)
-            .catch(error => console.error('Error saving agenda:', error.message));
-    }
-}
-
-function addAppointment() {
-    if (isReadOnly) return;
-
-    const date = document.getElementById('date-input').value;
-    const time = document.getElementById('time-input').value;
-    const note = document.getElementById('note-input').value;
-    const priority = document.getElementById('priority').value;
-
-    if (date && time && note) {
-        const key = `${date} ${time}`;
-        agenda[key] = { note, priority };
-        saveAgenda();
-        renderAgenda();
-    }
-}
-
-function renderAgenda() {
+// Load when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Get elements
+    const logoutButton = document.getElementById('logout-button');
+    const themeToggle = document.getElementById('theme-toggle');
     const agendaList = document.getElementById('agenda-list');
-    agendaList.innerHTML = '';
+    const shoppingListElement = document.getElementById('shopping-list');
 
-    for (const [key, value] of Object.entries(agenda)) {
-        const li = document.createElement('li');
-        li.textContent = `${key} - ${value.note} (${value.priority})`;
-
-        if (!isReadOnly) {
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '❌';
-            deleteBtn.classList.add('delete');
-            deleteBtn.onclick = () => {
-                delete agenda[key];
-                saveAgenda();
-                renderAgenda();
-            };
-
-            li.appendChild(deleteBtn);
-        }
-
-        agendaList.appendChild(li);
-    }
-}
-
-function loadShoppingList() {
-    const user = auth.currentUser;
-    if (user) {
-        const userId = user.uid;
-        const shoppingListRef = ref(db, 'shoppingList/' + userId);
-        onValue(shoppingListRef, (snapshot) => {
-            shoppingList = snapshot.val() || [];
-            renderShoppingList();
+    // Check if elements exist before adding event listeners
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                console.log('Utilisateur déconnecté');
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('Erreur de déconnexion:', error);
+            });
         });
     }
-}
 
-function saveShoppingList() {
-    const user = auth.currentUser;
-    if (user) {
-        const userId = user.uid;
-        const shoppingListRef = ref(db, 'shoppingList/' + userId);
-        set(shoppingListRef, shoppingList)
-            .catch(error => console.error('Error saving shopping list:', error.message));
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleDarkMode);
     }
-}
 
-function addItem() {
-    if (isReadOnly) return;
-
-    const item = document.getElementById('item-input').value;
-    if (item) {
-        shoppingList.push(item);
-        saveShoppingList();
-        renderShoppingList();
-    }
-}
-
-function renderShoppingList() {
-    const shoppingListItems = document.getElementById('shopping-list-items');
-    shoppingListItems.innerHTML = '';
-
-    shoppingList.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.textContent = item;
-
-        if (!isReadOnly) {
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = '❌';
-            deleteBtn.classList.add('delete');
-            deleteBtn.onclick = () => {
-                shoppingList.splice(index, 1);
-                saveShoppingList();
-                renderShoppingList();
-            };
-
-            li.appendChild(deleteBtn);
-        }
-
-        shoppingListItems.appendChild(li);
-    });
-}
-
-function toggleAuthFrame(show) {
-    const authFrame = document.getElementById('auth-frame');
-    authFrame.style.display = show ? 'flex' : 'none';
-}
-
-function handleSignOut() {
-    signOut(auth).then(() => {
-        window.location.href = 'index.html'; // Redirect to login page
-    }).catch(error => alert('Error: ' + error.message));
-}
-
-function setupEventListeners() {
-    document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
-    document.getElementById('add-appointment-btn').addEventListener('click', addAppointment);
-    document.getElementById('add-item-btn').addEventListener('click', addItem);
-    document.getElementById('logout-btn').addEventListener('click', handleSignOut);
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const user = auth.currentUser;
+    // Authentication state observer
+    onAuthStateChanged(auth, (user) => {
         if (user) {
-            document.getElementById('main-content').classList.remove('hidden');
-            loadAgenda();
-            loadShoppingList();
+            loadUserData(user.uid);
         } else {
-            window.location.href = 'index.html'; // Redirect to login page if not authenticated
+            window.location.href = 'index.html';
         }
     });
-}
 
-setupEventListeners();
+    // Toggle dark mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('theme-dark');
+        themeToggle.textContent = document.body.classList.contains('theme-dark') ? '🌙 Mode Clair' : '🌞 Mode Sombre';
+    }
+
+    // Load user data (agenda and shopping list)
+    function loadUserData(userId) {
+        const agendaRef = ref(db, 'agenda/' + userId);
+        const shoppingListRef = ref(db, 'shoppingList/' + userId);
+
+        // Load agenda
+        get(agendaRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const agenda = snapshot.val();
+                renderAgenda(agenda);
+            } else {
+                console.log('Aucun agenda trouvé.');
+            }
+        }).catch((error) => {
+            console.error('Erreur lors du chargement de l\'agenda:', error);
+        });
+
+        // Load shopping list
+        get(shoppingListRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const shoppingList = snapshot.val();
+                renderShoppingList(shoppingList);
+            } else {
+                console.log('Aucune liste de courses trouvée.');
+            }
+        }).catch((error) => {
+            console.error('Erreur lors du chargement de la liste de courses:', error);
+        });
+    }
+
+    // Render agenda
+    function renderAgenda(agenda) {
+        if (agendaList) {
+            agendaList.innerHTML = '';
+            Object.entries(agenda).forEach(([date, entry]) => {
+                const li = document.createElement('li');
+                li.textContent = `${date}: ${entry.note} (Priorité: ${entry.priority})`;
+                agendaList.appendChild(li);
+            });
+        }
+    }
+
+    // Render shopping list
+    function renderShoppingList(shoppingList) {
+        if (shoppingListElement) {
+            shoppingListElement.innerHTML = '';
+            shoppingList.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                shoppingListElement.appendChild(li);
+            });
+        }
+    }
+});
