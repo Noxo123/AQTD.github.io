@@ -3,39 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Application</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="theme-toggle">
-        <button id="theme-toggle">🌞</button>
-        <button id="logout-btn">Logout</button>
+    <div id="dashboard-section">
+        <h2>Tableau de bord</h2>
+        <button id="logout-button">Se déconnecter</button>
+        <button id="theme-toggle">🌞 Mode Sombre</button>
+        <div id="content">
+            <h3>Liste d'agenda et liste de courses</h3>
+            <!-- Liste d'agenda -->
+            <div id="agenda">
+                <h4>Agenda</h4>
+                <ul id="agenda-list"></ul>
+            </div>
+            <!-- Liste de courses -->
+            <div id="shopping-list-section">
+                <h4>Liste de courses</h4>
+                <ul id="shopping-list"></ul>
+            </div>
+        </div>
     </div>
 
-    <div class="tabs">
-        <button onclick="showTab('agenda')">Agenda</button>
-        <button onclick="showTab('shopping-list')">Shopping List</button>
-    </div>
-
-    <div id="agenda" class="tab-content">
-        <input type="date" id="date-input">
-        <input type="time" id="time-input">
-        <input type="text" id="note-input" placeholder="Note">
-        <select id="priority">
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-        </select>
-        <button id="add-appointment-btn">Add Appointment</button>
-        <ul id="agenda-list"></ul>
-    </div>
-
-    <div id="shopping-list" class="tab-content">
-        <input type="text" id="item-input" placeholder="Item">
-        <button id="add-item-btn">Add Item</button>
-        <ul id="shopping-list-items"></ul>
-    </div>
-
-    <script type="module" src="scripts.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>
