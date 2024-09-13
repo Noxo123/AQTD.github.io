@@ -70,3 +70,36 @@ document.addEventListener('DOMContentLoaded', () => {
         themeToggle.textContent = document.body.classList.contains('theme-dark') ? '🌙 Mode Clair' : '🌞 Mode Sombre';
     }
 });
+// Exemple simplifié pour la gestion des événements et des erreurs
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Vérifiez que les éléments existent avant d'ajouter des événements
+    const logoutButton = document.getElementById('logout-button');
+    const themeToggle = document.getElementById('theme-toggle');
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            // Code pour la déconnexion
+            signOut(auth).then(() => {
+                console.log('Utilisateur déconnecté');
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('Erreur de déconnexion:', error);
+            });
+        });
+    } else {
+        console.warn('Element with ID "logout-button" not found.');
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleDarkMode);
+    } else {
+        console.warn('Element with ID "theme-toggle" not found.');
+    }
+
+    // Fonction pour le mode sombre
+    function toggleDarkMode() {
+        document.body.classList.toggle('theme-dark');
+        themeToggle.textContent = document.body.classList.contains('theme-dark') ? '🌙 Mode Clair' : '🌞 Mode Sombre';
+    }
+});
