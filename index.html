@@ -1,21 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Connexion</title>
     <link rel="stylesheet" href="styles.css">
+    <script defer src="scripts.js"></script>
 </head>
 <body>
+
+    <!-- Conteneur principal pour l'authentification -->
     <div id="auth-container">
-        <h1>Login</h1>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button id="login-btn">Login</button>
-        <button id="signup-btn">Sign Up</button>
-        <button id="toggle-theme-btn">Toggle Theme</button>
+        <h1>Connexion</h1>
+
+        <!-- Formulaire de connexion -->
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Adresse e-mail" required>
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <button type="submit" id="login-btn">Se connecter</button>
+        </form>
+
+        <p>Vous n'avez pas de compte ? <button id="show-signup-btn">Créer un compte</button></p>
+
+        <!-- Formulaire d'inscription (masqué par défaut) -->
+        <form id="signup-form" style="display:none;">
+            <input type="email" id="signup-email" placeholder="Adresse e-mail" required>
+            <input type="password" id="signup-password" placeholder="Mot de passe" required>
+            <button type="submit" id="signup-btn">S'inscrire</button>
+        </form>
+
+        <!-- Bouton de bascule du thème -->
+        <button id="toggle-theme-btn">Mode Sombre</button>
     </div>
 
-    <script type="module" src="scripts.js"></script>
 </body>
 </html>
