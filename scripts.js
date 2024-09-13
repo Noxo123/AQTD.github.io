@@ -1,8 +1,6 @@
-// Import Firebase modules
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
 
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
     authDomain: "aqtd-5f6ed.firebaseapp.com",
@@ -13,11 +11,9 @@ const firebaseConfig = {
     measurementId: "G-C59QS88D6Y"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Handle authentication state
 document.addEventListener('DOMContentLoaded', () => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -27,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Sign in or Sign up
 document.getElementById('auth-btn').addEventListener('click', () => {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -48,7 +43,6 @@ document.getElementById('auth-btn').addEventListener('click', () => {
     }
 });
 
-// Toggle between Sign In and Sign Up
 document.getElementById('toggle-auth').addEventListener('click', () => {
     const authTitle = document.getElementById('auth-title');
     if (authTitle.textContent === 'Login') {
