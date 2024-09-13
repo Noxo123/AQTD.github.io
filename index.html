@@ -3,47 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication and Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Section de connexion/inscription -->
-    <div id="auth-section">
-        <h2>Connexion</h2>
-        <form id="login-form">
-            <input type="email" id="login-email" placeholder="Email" required>
-            <input type="password" id="login-password" placeholder="Mot de passe" required>
-            <button type="submit">Se connecter</button>
-        </form>
+    <!-- Exemple de structure HTML -->
+    <button id="logout-button">Déconnexion</button>
+    <button id="theme-toggle">🌞 Mode Sombre</button>
 
-        <h2>Inscription</h2>
-        <form id="signup-form">
-            <input type="email" id="signup-email" placeholder="Email" required>
-            <input type="password" id="signup-password" placeholder="Mot de passe" required>
-            <button type="submit">S'inscrire</button>
-        </form>
-    </div>
+    <!-- Ajoutez plus de contenu ici -->
 
-    <!-- Section tableau de bord après connexion -->
-    <div id="dashboard-section" style="display: none;">
-        <h2>Tableau de bord</h2>
-        <button id="logout-button">Se déconnecter</button>
-        <button id="theme-toggle">🌞 Mode Sombre</button>
-        <div id="content">
-            <h3>Liste d'agenda et liste de courses</h3>
-            <!-- Liste d'agenda -->
-            <div id="agenda">
-                <h4>Agenda</h4>
-                <ul id="agenda-list"></ul>
-            </div>
-            <!-- Liste de courses -->
-            <div id="shopping-list-section">
-                <h4>Liste de courses</h4>
-                <ul id="shopping-list"></ul>
-            </div>
-        </div>
-    </div>
-
-    <script src="index.js"></script>
+    <!-- Inclure le script JavaScript -->
+    <script type="module" src="index.js"></script>
 </body>
 </html>
