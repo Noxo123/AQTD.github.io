@@ -1,85 +1,34 @@
-// Import unique de Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js";
+// Import Firebase modules
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
+import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js';
 
-// Configuration Firebase
+// Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
-    authDomain: "aqtd-5f6ed.firebaseapp.com",
-    projectId: "aqtd-5f6ed",
-    storageBucket: "aqtd-5f6ed.appspot.com",
-    messagingSenderId: "755816540323",
-    appId: "1:755816540323:web:e85774039b471fee7cf716",
-    measurementId: "G-C59QS88D6Y"
+  apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
+  authDomain: "aqtd-5f6ed.firebaseapp.com",
+  projectId: "aqtd-5f6ed",
+  storageBucket: "aqtd-5f6ed.appspot.com",
+  messagingSenderId: "755816540323",
+  appId: "1:755816540323:web:e85774039b471fee7cf716",
+  measurementId: "G-C59QS88D6Y"
 };
 
-// Initialisation de Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
-// Connexion utilisateur
-document.getElementById('login-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-            console.error('Erreur de connexion', error);
-        });
-});
-
-// Inscription utilisateur
-document.getElementById('signup-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-            console.error('Erreur lors de l\'inscription', error);
-        });
-});
-
-// Déconnexion utilisateur
-document.getElementById('logout-btn').addEventListener('click', () => {
-    signOut(auth).then(() => {
-        window.location.href = "index.html";
-    }).catch((error) => {
-        console.error('Erreur lors de la déconnexion', error);
-    });
-});
+// Load when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
-    const logoutBtn = document.getElementById('logout-btn');
+    const logoutButton = document.getElementById('logout-button');
+    const themeToggle = document.getElementById('theme-toggle');
+    const authSection = document.getElementById('auth-section');
+    const dashboardSection = document.getElementById('dashboard-section');
 
-    // Vérification et ajout de l'écouteur sur le formulaire de connexion
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    window.location.href = "dashboard.html";
-                })
-                .catch((error) => {
-                    console.error('Erreur de connexion', error);
-                });
-        });
-    } else {
-        console.error('Formulaire de connexion non trouvé');
-    }
-
-    // Vérification et ajout de l'écouteur sur le formulaire d'inscription
+    // User sign up
     if (signupForm) {
         signupForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -88,22 +37,126 @@ document.addEventListener('DOMContentLoaded', () => {
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    window.location.href = "dashboard.html";
+                    console.log('Utilisateur créé:', userCredential.user);
                 })
                 .catch((error) => {
-                    console.error('Erreur lors de l\'inscription', error);
+                    console.error('Erreur lors de l\'inscription:', error);
                 });
         });
     }
 
-    // Vérification et ajout de l'écouteur sur le bouton de déconnexion
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+    // User login
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    console.log('Utilisateur connecté:', userCredential.user);
+                    showDashboard();
+                })
+                .catch((error) => {
+                    console.error('Erreur de connexion:', error);
+                });
+        });
+    }
+
+    // User logout
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
             signOut(auth).then(() => {
-                window.location.href = "index.html";
+                console.log('Utilisateur déconnecté');
+                showAuthSection();
             }).catch((error) => {
-                console.error('Erreur lors de la déconnexion', error);
+                console.error('Erreur de déconnexion:', error);
             });
+        });
+    }
+
+    // Switch theme
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleDarkMode);
+    }
+
+    // Authentication state observer
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            showDashboard();
+            loadUserData(user.uid);
+        } else {
+            showAuthSection();
+        }
+    });
+
+    // Toggle dark mode
+    function toggleDarkMode() {
+        document.body.classList.toggle('theme-dark');
+        themeToggle.textContent = document.body.classList.contains('theme-dark') ? '🌙 Mode Clair' : '🌞 Mode Sombre';
+    }
+
+    // Show dashboard
+    function showDashboard() {
+        authSection.style.display = 'none';
+        dashboardSection.style.display = 'block';
+    }
+
+    // Show authentication section
+    function showAuthSection() {
+        authSection.style.display = 'block';
+        dashboardSection.style.display = 'none';
+    }
+
+    // Load user data (agenda and shopping list)
+    function loadUserData(userId) {
+        const agendaRef = ref(db, 'agenda/' + userId);
+        const shoppingListRef = ref(db, 'shoppingList/' + userId);
+
+        // Load agenda
+        get(agendaRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const agenda = snapshot.val();
+                renderAgenda(agenda);
+            } else {
+                console.log('Aucun agenda trouvé.');
+            }
+        }).catch((error) => {
+            console.error('Erreur lors du chargement de l\'agenda:', error);
+        });
+
+        // Load shopping list
+        get(shoppingListRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const shoppingList = snapshot.val();
+                renderShoppingList(shoppingList);
+            } else {
+                console.log('Aucune liste de courses trouvée.');
+            }
+        }).catch((error) => {
+            console.error('Erreur lors du chargement de la liste de courses:', error);
+        });
+    }
+
+    // Render agenda
+    function renderAgenda(agenda) {
+        const agendaList = document.getElementById('agenda-list');
+        agendaList.innerHTML = '';
+        Object.entries(agenda).forEach(([date, entry]) => {
+            const li = document.createElement('li');
+            li.textContent = `${date}: ${entry.note} (Priorité: ${entry.priority})`;
+            agendaList.appendChild(li);
+        });
+    }
+
+    // Render shopping list
+    function renderShoppingList(shoppingList) {
+        const shoppingListElement = document.getElementById('shopping-list');
+        shoppingListElement.innerHTML = '';
+        shoppingList.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            shoppingListElement.appendChild(li);
         });
     }
 });
