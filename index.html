@@ -3,17 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Exemple de structure HTML -->
-    <button id="logout-button">Déconnexion</button>
-    <button id="theme-toggle">🌞 Mode Sombre</button>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <div id="error-message"></div>
+    </div>
 
-    <!-- Ajoutez plus de contenu ici -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js"></script>
 
-    <!-- Inclure le script JavaScript -->
-    <script type="module" src="index.js"></script>
+    <!-- Votre script -->
+    <script src="login.js"></script>
 </body>
 </html>
