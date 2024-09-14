@@ -1,9 +1,3 @@
-// index.js
-
-// Import Firebase modules
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.1.3/firebase-auth.js';
-
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
@@ -15,91 +9,25 @@ const firebaseConfig = {
   measurementId: "G-C59QS88D6Y"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// Initialiser Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-// Load when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    // Get elements
-    const loginForm = document.getElementById('login-form');
-    const signupForm = document.getElementById('signup-form');
-    const themeToggle = document.getElementById('theme-toggle');
-
-    // Check if elements exist before adding event listeners
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    console.log('Utilisateur connecté:', userCredential.user);
-                    window.location.href = 'dashboard.html';
-                })
-                .catch((error) => {
-                    console.error('Erreur de connexion:', error);
-                });
+// Fonction pour gérer le login
+document.getElementById('login-form').addEventListener('submit', (e) => {
+    e.preventDefault(); // Empêcher le rechargement de la page
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    // Authentification avec Firebase
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Si connexion réussie, rediriger vers le dashboard
+            window.location.href = 'dashboard.html';
+        })
+        .catch((error) => {
+            // Gérer les erreurs de connexion
+            const errorMessage = error.message;
+            document.getElementById('error-message').textContent = errorMessage;
         });
-    }
-
-    if (signupForm) {
-        signupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    console.log('Utilisateur créé:', userCredential.user);
-                })
-                .catch((error) => {
-                    console.error('Erreur lors de l\'inscription:', error);
-                });
-        });
-    }
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleDarkMode);
-    }
-
-    // Toggle dark mode
-    function toggleDarkMode() {
-        document.body.classList.toggle('theme-dark');
-        themeToggle.textContent = document.body.classList.contains('theme-dark') ? '🌙 Mode Clair' : '🌞 Mode Sombre';
-    }
-});
-// Exemple simplifié pour la gestion des événements et des erreurs
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Vérifiez que les éléments existent avant d'ajouter des événements
-    const logoutButton = document.getElementById('logout-button');
-    const themeToggle = document.getElementById('theme-toggle');
-
-    if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-            // Code pour la déconnexion
-            signOut(auth).then(() => {
-                console.log('Utilisateur déconnecté');
-                window.location.href = 'index.html';
-            }).catch((error) => {
-                console.error('Erreur de déconnexion:', error);
-            });
-        });
-    } else {
-        console.warn('Element with ID "logout-button" not found.');
-    }
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleDarkMode);
-    } else {
-        console.warn('Element with ID "theme-toggle" not found.');
-    }
-
-    // Fonction pour le mode sombre
-    function toggleDarkMode() {
-        document.body.classList.toggle('theme-dark');
-        themeToggle.textContent = document.body.classList.contains('theme-dark') ? '🌙 Mode Clair' : '🌞 Mode Sombre';
-    }
 });
