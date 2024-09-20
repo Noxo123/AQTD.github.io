@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfert de fichiers avec Firebase</title>
+    <!-- Importer Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+</head>
+<body>
+    <h1>Transfert de fichiers avec Firebase</h1>
+
+    <form id="uploadForm">
+        <input type="file" id="fileInput" multiple>
+        <button type="submit">Envoyer les fichiers</button>
+    </form>
+
+    <h2>Fichiers transférés</h2>
+    <ul id="fileList"></ul>
+
+    <script>
+        // Configurer Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
+  authDomain: "aqtd-5f6ed.firebaseapp.com",
+  projectId: "aqtd-5f6ed",
+  storageBucket: "aqtd-5f6ed.appspot.com",
+  messagingSenderId: "755816540323",
+  appId: "1:755816540323:web:e85774039b471fee7cf716",
+  measurementId: "G-C59QS88D6Y"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        const storage = firebase.storage();
+        const firestore = firebase.firestore();
+
+        // Gestion de l'envoi de fichier
+        document.getElementById('uploadForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const files = document.getElementById('fileInput').files;
+            for (let i = 0; i < files.length; i++) {
+                uploadFile(files[i]);
+            }
+        });
+
+        // Fonction d'upload du fichier
+        function uploadFile(file) {
+            const storageRef = storage.ref('uploads/' + file.name);
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload en cours : ' + progress + '%');
+                }, 
+                (error) => {
+                    console.error('Erreur d\'upload : ', error);
+                }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('Fichier disponible à : ', downloadURL);
+                        saveFileData(file.name, downloadURL);
+                    });
+                }
+            );
+        }
+
+        // Sauvegarde des métadonnées dans Firestore
+        function saveFileData(fileName, downloadURL) {
+            firestore.collection('files').add({
+                name: fileName,
+                url: downloadURL,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                console.log('Données du fichier sauvegardées dans Firestore');
+                displayFiles();
+            }).catch((error) => {
+                console.error('Erreur lors de la sauvegarde dans Firestore : ', error);
+            });
+        }
+
+        // Affichage des fichiers transférés
+        function displayFiles() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            firestore.collection('files').orderBy('timestamp', 'desc').get().then((snapshot) => {
+                snapshot.forEach((doc) => {
+                    const file = doc.data();
+                    const listItem = document.createElement('li');
+                    listItem.textContent = file.name + ' - ' + file.url;
+                    fileList.appendChild(listItem);
+                });
+            });
+        }
+
+        // Afficher les fichiers au chargement
+        displayFiles();
+    </script>
+</body>
+</html>
