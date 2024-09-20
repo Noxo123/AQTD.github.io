@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transfert de fichiers avec Firebase</title>
-    <!-- Importer Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js"></script>
+    <!-- Firebase SDK via CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <h1>Transfert de fichiers avec Firebase</h1>
@@ -32,6 +32,8 @@
   appId: "1:755816540323:web:e85774039b471fee7cf716",
   measurementId: "G-C59QS88D6Y"
         };
+
+        // Initialisation de Firebase
         firebase.initializeApp(firebaseConfig);
         
         const storage = firebase.storage();
