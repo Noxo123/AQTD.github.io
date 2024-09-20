@@ -8,7 +8,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <h1>Transfert de fichiers avec Firebase</h1>
@@ -24,13 +23,13 @@
     <script>
         // Configurer Firebase
         const firebaseConfig = {
-  apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
-  authDomain: "aqtd-5f6ed.firebaseapp.com",
-  projectId: "aqtd-5f6ed",
-  storageBucket: "aqtd-5f6ed.appspot.com",
-  messagingSenderId: "755816540323",
-  appId: "1:755816540323:web:e85774039b471fee7cf716",
-  measurementId: "G-C59QS88D6Y"
+            apiKey: "VOTRE_API_KEY",
+            authDomain: "VOTRE_PROJECT_ID.firebaseapp.com",
+            projectId: "VOTRE_PROJECT_ID",
+            storageBucket: "VOTRE_PROJECT_ID.appspot.com",
+            messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
+            appId: "VOTRE_APP_ID",
+            measurementId: "VOTRE_MEASUREMENT_ID"
         };
 
         // Initialisation de Firebase
@@ -84,7 +83,7 @@
             });
         }
 
-        // Affichage des fichiers transférés
+        // Affichage des fichiers transférés avec lien de téléchargement
         function displayFiles() {
             const fileList = document.getElementById('fileList');
             fileList.innerHTML = '';
@@ -93,7 +92,17 @@
                 snapshot.forEach((doc) => {
                     const file = doc.data();
                     const listItem = document.createElement('li');
-                    listItem.textContent = file.name + ' - ' + file.url;
+
+                    // Créer un lien de téléchargement
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = file.url;
+                    downloadLink.textContent = 'Télécharger';
+                    downloadLink.setAttribute('target', '_blank');  // Ouvrir dans un nouvel onglet
+
+                    // Ajouter le nom du fichier suivi du lien de téléchargement
+                    listItem.textContent = file.name + ' ';
+                    listItem.appendChild(downloadLink);
+
                     fileList.appendChild(listItem);
                 });
             });
