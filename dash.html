@@ -1,58 +1,173 @@
-<!-- dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Gestion des utilisateurs Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin-top: 50px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .user-actions button {
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Gestion des utilisateurs Firebase</h1>
-
-    <div id="user-list">
-        <h2>Liste des utilisateurs</h2>
-        <ul id="users">
-            <!-- Les utilisateurs seront listés ici -->
-        </ul>
+    <h1>Connexion Admin</h1>
+    <div class="container">
+        <div id="login">
+            <input type="email" id="email" placeholder="Votre email">
+            <button id="sendCodeBtn">Envoyer le code</button>
+            <input type="text" id="code" placeholder="Entrez le code à 6 chiffres">
+            <button id="verifyCodeBtn">Vérifier le code</button>
+        </div>
+        <div id="dashboard" style="display: none;">
+            <h2>Gestion des utilisateurs</h2>
+            <ul id="users">
+                <!-- Liste des utilisateurs -->
+            </ul>
+        </div>
     </div>
 
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+
     <script>
-      // Récupérer la liste des utilisateurs Firebase
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          firebase.firestore().collection('users').get().then(snapshot => {
-            const usersList = document.getElementById('users');
-            snapshot.forEach(doc => {
-              const userData = doc.data();
-              const li = document.createElement('li');
-              li.innerHTML = `${userData.email} 
-                              <button onclick="suspendUser('${doc.id}')">Suspendre</button>
-                              <button onclick="deleteUser('${doc.id}')">Supprimer</button>`;
-              usersList.appendChild(li);
+        // Configuration Firebase
+        const firebaseConfig = {
+  apiKey: "AIzaSyCZ4T5QxdqK6pDqWuGecnt4X-CZpT3DaOQ",
+  authDomain: "aqtd-5f6ed.firebaseapp.com",
+  projectId: "aqtd-5f6ed",
+  storageBucket: "aqtd-5f6ed.appspot.com",
+  messagingSenderId: "755816540323",
+  appId: "1:755816540323:web:e85774039b471fee7cf716",
+  measurementId: "G-C59QS88D6Y"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let verificationCode = null;
+
+        // Quand l'utilisateur soumet son email pour recevoir le code
+        document.getElementById('sendCodeBtn').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+
+            // Générez un code à 6 chiffres aléatoire
+            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // Simule l'envoi d'email (remplacer par un service d'email)
+            alert(`Le code de vérification est : ${verificationCode}`);
+        });
+
+        // Quand l'utilisateur entre le code pour se connecter
+        document.getElementById('verifyCodeBtn').addEventListener('click', function() {
+            const enteredCode = document.getElementById('code').value;
+
+            if (enteredCode === verificationCode) {
+                alert("Connexion réussie !");
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadUsers();
+            } else {
+                alert("Code incorrect, veuillez réessayer.");
+            }
+        });
+
+        // Charger la liste des utilisateurs
+        function loadUsers() {
+            db.collection('users').get().then(snapshot => {
+                const usersList = document.getElementById('users');
+                usersList.innerHTML = ''; // Effacer la liste actuelle
+                snapshot.forEach(doc => {
+                    const userData = doc.data();
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        ${userData.email}
+                        <div class="user-actions">
+                            <button onclick="suspendUser('${doc.id}')">Suspendre</button>
+                            <button onclick="deleteUser('${doc.id}')">Supprimer</button>
+                        </div>`;
+                    usersList.appendChild(li);
+                });
             });
-          });
-        } else {
-          // Redirection si non authentifié
-          window.location.href = 'index.html';
         }
-      });
 
-      // Suspendre un utilisateur
-      function suspendUser(userId) {
-        firebase.firestore().collection('users').doc(userId).update({
-          suspended: true
-        }).then(() => {
-          alert('Utilisateur suspendu');
-        });
-      }
+        // Suspendre un utilisateur
+        function suspendUser(userId) {
+            db.collection('users').doc(userId).update({
+                suspended: true
+            }).then(() => {
+                alert('Utilisateur suspendu');
+                loadUsers(); // Recharger la liste des utilisateurs
+            });
+        }
 
-      // Supprimer un utilisateur
-      function deleteUser(userId) {
-        firebase.firestore().collection('users').doc(userId).delete().then(() => {
-          alert('Utilisateur supprimé');
-          window.location.reload(); // Rafraîchit la liste après suppression
-        });
-      }
+        // Supprimer un utilisateur
+        function deleteUser(userId) {
+            db.collection('users').doc(userId).delete().then(() => {
+                alert('Utilisateur supprimé');
+                loadUsers(); // Recharger la liste des utilisateurs
+            });
+        }
     </script>
 </body>
 </html>
