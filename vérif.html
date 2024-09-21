@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Admin</title>
+</head>
+<body>
+    <h1>Connexion au tableau de bord</h1>
+    <div id="login">
+        <input type="email" id="email" placeholder="Votre email">
+        <button id="sendCodeBtn">Envoyer le code</button>
+        <input type="text" id="code" placeholder="Entrez le code à 6 chiffres">
+        <button id="verifyCodeBtn">Vérifier le code</button>
+    </div>
+
+    <script>
+      let verificationCode = null;
+
+      // Quand l'utilisateur soumet son email
+      document.getElementById('sendCodeBtn').addEventListener('click', function() {
+        const email = document.getElementById('email').value;
+
+        // Générez un code à 6 chiffres aléatoire
+        verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+        // Simuler l'envoi par email (utilisez un service d'email dans un vrai projet)
+        alert(`Le code de vérification est : ${verificationCode}`);
+      });
+
+      // Quand l'utilisateur soumet le code à 6 chiffres
+      document.getElementById('verifyCodeBtn').addEventListener('click', function() {
+        const enteredCode = document.getElementById('code').value;
+
+        if (enteredCode === verificationCode) {
+          alert("Code correct, vous êtes connecté !");
+          window.location.href = 'dashboard.html';  // Redirection vers la page admin
+        } else {
+          alert("Code incorrect, veuillez réessayer.");
+        }
+      });
+    </script>
+</body>
+</html>
