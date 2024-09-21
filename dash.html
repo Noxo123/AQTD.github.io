@@ -1,0 +1,58 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h1>Gestion des utilisateurs Firebase</h1>
+
+    <div id="user-list">
+        <h2>Liste des utilisateurs</h2>
+        <ul id="users">
+            <!-- Les utilisateurs seront listés ici -->
+        </ul>
+    </div>
+
+    <script>
+      // Récupérer la liste des utilisateurs Firebase
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          firebase.firestore().collection('users').get().then(snapshot => {
+            const usersList = document.getElementById('users');
+            snapshot.forEach(doc => {
+              const userData = doc.data();
+              const li = document.createElement('li');
+              li.innerHTML = `${userData.email} 
+                              <button onclick="suspendUser('${doc.id}')">Suspendre</button>
+                              <button onclick="deleteUser('${doc.id}')">Supprimer</button>`;
+              usersList.appendChild(li);
+            });
+          });
+        } else {
+          // Redirection si non authentifié
+          window.location.href = 'index.html';
+        }
+      });
+
+      // Suspendre un utilisateur
+      function suspendUser(userId) {
+        firebase.firestore().collection('users').doc(userId).update({
+          suspended: true
+        }).then(() => {
+          alert('Utilisateur suspendu');
+        });
+      }
+
+      // Supprimer un utilisateur
+      function deleteUser(userId) {
+        firebase.firestore().collection('users').doc(userId).delete().then(() => {
+          alert('Utilisateur supprimé');
+          window.location.reload(); // Rafraîchit la liste après suppression
+        });
+      }
+    </script>
+</body>
+</html>
